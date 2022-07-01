@@ -1,0 +1,23 @@
+name: deploy
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: deploy
+        uses: appleboy/ssh-action@main
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_PRIVATE_KEY_PASSPHRASE }}
+          script: |
+            cd ~/procon33_RemoteTravelers_python/
+            git pull origin main
+            git add .
+            git commit -m "Update"
+            git push origin main
