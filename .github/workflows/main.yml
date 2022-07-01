@@ -17,6 +17,7 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           proxy_host: ${{ secrets.PROXY_HOST }}
+          proxy_username: ${{ secrets.SERVER_USERNAME }}
           proxy_port: ${{ secrets.PROXY_PORT }}
           script: |
             cd ~/procon33_RemoteTravelers_python/
