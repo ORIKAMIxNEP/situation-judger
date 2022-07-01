@@ -1,4 +1,4 @@
-name: deploy
+name: main
 on:
   push:
     branches:
@@ -7,7 +7,7 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     steps:
-      - name: deploy
+      - name: main
         uses: appleboy/ssh-action@main
         with:
           host: ${{ secrets.SERVER_HOST }}
