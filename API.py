@@ -3,9 +3,9 @@ import nltk
 import gensim
 from ImageCaption import ImageCaption
 
-nltk.download('punkt')
-nltk.download('averaged_perceptron_tagger')
-file = 'lexvec.enwiki+newscrawl.300d.W.pos.vectors.gz'
+nltk.download("punkt")
+nltk.download("averaged_perceptron_tagger")
+file = "~/lexvec.enwiki+newscrawl.300d.W.pos.vectors.gz"
 wm_en = gensim.models.KeyedVectors.load_word2vec_format(file)
 
 app = Flask(__name__)
