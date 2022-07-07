@@ -154,7 +154,7 @@ def generate2(
 
 
 def ImageCaption(modelFile):
-    model_path = os.path.join("./models/", modelFile)
+    model_path = os.path.join("~/models/", modelFile)
     device = CUDA(0) if torch.cuda.is_available() else "cpu"
     clip_model, preprocess = clip.load("ViT-B/32", device=device, jit=False)
     tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
@@ -164,7 +164,7 @@ def ImageCaption(modelFile):
     model = model.eval()
     device = CUDA(0) if torch.cuda.is_available() else "cpu"
     model = model.to(device)
-    files = glob.glob("./images/*")
+    files = glob.glob("~/images/*")
     file = max(files, key=os.path.getctime)
     image = io.imread(file)
     pil_image = PIL.Image.fromarray(image)
