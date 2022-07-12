@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>Test</title>
+  </head>
+  <body>
+    <h1>POST Test</h1>
+    <form enctype="multipart/form-data">
+      <input type="file" name="img">
+      <button type="submit" formmethod="post">POST</button></p>
+      {% if imagePath %}
+      <div>
+        <img src="{{ imagePath }}" style="width: 200px;">
+      </div>
+      <p>{{ imagePath }}</p>
+      <p>{{ caption }}</p>
+      {% endif %}
+    </form>
+  </body>
+</html>

@@ -1,4 +1,6 @@
-from flask import Flask
+from flask import Flask, render_template, request
+import datetime
+import requests
 import nltk
 import gensim
 from ImageCaption import ImageCaption
@@ -9,10 +11,22 @@ file = "~/lexvec.enwiki+newscrawl.300d.W.pos.vectors.gz"
 wm_en = gensim.models.KeyedVectors.load_word2vec_format(file)
 
 app = Flask(__name__)
+app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
 
 
-@app.route("/", methods=["GET"])
+@app.route("/", methods=["GET", "POST"])
 def API():
+    if request.method == "GET":
+        imagePath = None
+    elif request.method == "POST":
+        fs = request.files["image"].stream
+        fs.save("../images/" +
+                datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg")
+    return render_template("test.html", imagePath=imagePath, caption=requests.get("http://172.31.50.221:20221/situation_judgment"))
+
+
+@app.route("/situation_judgment", methods=["GET"])
+def SituationJudgment():
     string = ImageCaption()
     print("\n\n画像キャプション生成："+string)
 
