@@ -23,7 +23,8 @@ def API():
         fs = request.files["image"]
         imagePath = "../images/" + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg"
         fs.save(imagePath)
-        caption = requests.get("http://172.31.50.221:20221/situation_judgment")
+        caption = requests.get(
+            "http://172.31.50.221:20221/situation_judgment").text
     return render_template("test.html", imagePath=imagePath, caption=caption)
 
 
