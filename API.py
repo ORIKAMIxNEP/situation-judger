@@ -56,6 +56,8 @@ def API():
     print("\n"+str(counts))
     print("\n旅行者は \""+max(counts, key=counts.get) + "\" である")
 
+    return "\n旅行者は \""+max(counts, key=counts.get) + "\" である"
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=20221, debug=True)
