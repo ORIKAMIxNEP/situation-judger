@@ -20,7 +20,7 @@ def API():
         imagePath = None
         caption = None
     elif request.method == "POST":
-        fs = request.files["image"].stream
+        fs = request.files["image"]
         imagePath = "../images/" + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg"
         fs.save(imagePath)
         caption = requests.get("http://172.31.50.221:20221/situation_judgment")
