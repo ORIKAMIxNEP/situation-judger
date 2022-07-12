@@ -154,7 +154,7 @@ def generate2(
 
 
 def ImageCaption():
-    model_path = os.path.join("~/models/", "conceptual_weights.pt")
+    model_path = os.path.join("~/models", "conceptual_weights.pt")
     device = CUDA(0) if torch.cuda.is_available() else "cpu"
     clip_model, preprocess = clip.load("ViT-B/32", device=device, jit=False)
     tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
