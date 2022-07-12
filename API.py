@@ -18,11 +18,13 @@ app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
 def API():
     if request.method == "GET":
         imagePath = None
+        caption = None
     elif request.method == "POST":
         fs = request.files["image"].stream
-        fs.save("../images/" +
-                datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg")
-    return render_template("test.html", imagePath=imagePath, caption=requests.get("http://172.31.50.221:20221/situation_judgment"))
+        imagePath = "../images/" + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg"
+        fs.save(imagePath)
+        caption = requests.get("http://172.31.50.221:20221/situation_judgment")
+    return render_template("test.html", imagePath=imagePath, caption=caption)
 
 
 @app.route("/situation_judgment", methods=["GET"])
