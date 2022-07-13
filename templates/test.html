@@ -2,16 +2,14 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <title>Test</title>
+    <title>API Test</title>
   </head>
   <body>
     <h1>API Test</h1>
     <form enctype="multipart/form-data">
       <input type="file" name="image">
-      <button type="submit" formmethod="post">POST</button></p>
-      {% if caption %}
+      <button type="submit" formmethod="post">画像を送信</button></p>
       <p>{{ caption }}</p>
-      {% endif %}
     </form>
   </body>
 </html>
