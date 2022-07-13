@@ -11,7 +11,7 @@ file = "~/lexvec.enwiki+newscrawl.300d.W.pos.vectors.gz"
 wm_en = gensim.models.KeyedVectors.load_word2vec_format(file)
 
 app = Flask(__name__)
-app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
+app.config["MAX_CONTENT_LENGTH"] = 1024 * 1024
 
 
 @app.route("/", methods=["GET", "POST"])
