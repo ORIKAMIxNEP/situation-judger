@@ -25,7 +25,7 @@ def API():
         fs.save(imagePath)
         caption = requests.get(
             "http://172.31.50.221:20221/situation_judgment").json()["caption"]
-        return render_template("test.html", caption=caption)
+    return render_template("test.html", caption=caption)
 
 
 @app.route("/situation_judgment", methods=["GET"])
