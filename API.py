@@ -1,4 +1,3 @@
-from xml.etree.ElementTree import canonicalize
 from flask import Flask, render_template, request
 import datetime
 import requests
@@ -25,8 +24,8 @@ def API():
         imagePath = "../images/" + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg"
         fs.save(imagePath)
         caption = requests.get(
-            "http://172.31.50.221:20221/situation_judgment").text
-    return render_template("test.html", caption=caption)
+            "http://172.31.50.221:20221/situation_judgment").json()["caption"]
+        return render_template("test.html", caption=caption)
 
 
 @app.route("/situation_judgment", methods=["GET"])
