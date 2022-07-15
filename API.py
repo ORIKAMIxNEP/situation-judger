@@ -1,3 +1,4 @@
+from xml.etree.ElementTree import canonicalize
 from flask import Flask, render_template, request
 import datetime
 import requests
@@ -71,9 +72,12 @@ def SituationJudgment():
             if vector["type"] == count:
                 counts[count] += 1
     print("\n"+str(counts))
-    print("\n旅行者は \""+max(counts, key=counts.get) + "\" である")
 
-    return "\n旅行者は \""+max(counts, key=counts.get) + "\" である"
+    CaptionData = dict(caption="\n旅行者は \"" +
+                       max(counts, key=counts.get) + "\" である")
+    print(CaptionData["caption"])
+
+    return jsonify(CaptionData)
 
 
 if __name__ == "__main__":
