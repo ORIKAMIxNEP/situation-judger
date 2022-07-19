@@ -40,17 +40,24 @@ def SituationJudgment(string):
     print("\n"+str(vectors))
 
     counts = {}
+    sums = {}
     for similarity in similarityList:
         for label in similarity:
             counts.update([(label, 0)])
+            sums.update([(label, 0)])
     for vector in vectors.values():
         for count in counts:
             if vector["type"] == count:
                 counts[count] += 1
+                sums[count] += vector["max"]
     print("\n"+str(counts))
+    print("\n"+str(sums))
 
-    CaptionData = dict(caption="\n旅行者は \"" +
-                       max(counts, key=counts.get) + "\" である")
+    if counts.count(max(counts.values())) == 1:
+        CaptionData = dict(caption=max(counts, key=counts.get))
+    else:
+        CaptionData = dict(caption=max(sums, key=sums.get))
+
     print(CaptionData["caption"])
 
     return CaptionData
