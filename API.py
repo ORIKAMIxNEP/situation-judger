@@ -1,14 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 import datetime
 import requests
-import nltk
-import gensim
 from ImageCaption import ImageCaption
-
-nltk.download("punkt")
-nltk.download("averaged_perceptron_tagger")
-file = "~/lexvec.enwiki+newscrawl.300d.W.pos.vectors.gz"
-wm_en = gensim.models.KeyedVectors.load_word2vec_format(file)
+from SituationJudgment import SituationJudgment
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 1024 * 1024
@@ -16,6 +10,16 @@ app.config["MAX_CONTENT_LENGTH"] = 1024 * 1024
 
 @app.route("/", methods=["GET", "POST"])
 def API():
+    if request.method == "POST":
+        fs = request.files["image"]
+        imagePath = "../images/" + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg"
+        fs.save(imagePath)
+    string = ImageCaption()
+    return jsonify(SituationJudgment(string))
+
+
+@app.route("/web_test", methods=["GET", "POST"])
+def WebTest():
     if request.method == "GET":
         imagePath = None
         caption = None
@@ -24,59 +28,8 @@ def API():
         imagePath = "../images/" + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg"
         fs.save(imagePath)
         caption = requests.get(
-            "http://172.31.50.221:20221/situation_judgment").json()["caption"]
+            "http://172.31.50.221:20221/").json()["caption"]
     return render_template("test.html", caption=caption)
-
-
-@app.route("/situation_judgment", methods=["GET"])
-def SituationJudgment():
-    string = ImageCaption()
-    print("\n\n画像キャプション生成："+string)
-
-    words = nltk.word_tokenize(string)
-    nouns = []
-    for word in nltk.pos_tag(words):
-        if word[1] == "NN" or word[1] == "NNS" or word[1] == "NNP" or word[1] == "NNS":
-            for n in nouns:
-                if word[0] == n:
-                    break
-            else:
-                nouns.append(word[0])
-    print("\n抽出した名詞："+str(nouns))
-
-    similarityList = [{"食事中": {"food": 0, "dish": 0, "meal": 0, "snack": 0}}, {"観光中(建物)": {"building": 0, "structure": 0}}, {
-        "観光中(風景)": {"landscape": 0, "scene": 0}}, {"動物と触れ合い中": {"animal": 0}}, {"自撮り中、又は他人を撮影中": {"human": 0, "person": 0, "people": 0}}]
-    vectors = {noun: {"type": "", "max": -1} for noun in nouns}
-
-    for noun in nouns:
-        for i in range(len(similarityList)):
-            for label, similarity in similarityList[i].items():
-                for key in similarity:
-                    similarityList[i][label][key] = wm_en.similarity(key, noun)
-        print(noun+"："+str(similarityList))
-        maxValue = -1
-        for i in range(len(similarityList)):
-            for label, similarity in similarityList[i].items():
-                if max(similarity.values()) > maxValue:
-                    vectors[noun]["type"] = label
-                    vectors[noun]["max"] = maxValue = max(similarity.values())
-    print("\n"+str(vectors))
-
-    counts = {}
-    for similarity in similarityList:
-        for label in similarity:
-            counts.update([(label, 0)])
-    for vector in vectors.values():
-        for count in counts:
-            if vector["type"] == count:
-                counts[count] += 1
-    print("\n"+str(counts))
-
-    CaptionData = dict(caption="\n旅行者は \"" +
-                       max(counts, key=counts.get) + "\" である")
-    print(CaptionData["caption"])
-
-    return jsonify(CaptionData)
 
 
 if __name__ == "__main__":
