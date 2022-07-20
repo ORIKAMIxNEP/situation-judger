@@ -175,4 +175,5 @@ def ImageCaption():
         prefix_embed = model.clip_project(
             prefix).reshape(1, prefix_length, -1)
     generated_text_prefix = generate2(model, tokenizer, embed=prefix_embed)
+    print("\n画像キャプション生成："+generated_text_prefix)
     return generated_text_prefix
