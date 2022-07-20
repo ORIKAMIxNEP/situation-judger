@@ -1,5 +1,6 @@
 import nltk
 import gensim
+import collections
 
 nltk.download("punkt")
 nltk.download("averaged_perceptron_tagger")
@@ -53,7 +54,10 @@ def SituationJudgment(string):
     print("\n"+str(counts))
     print("\n"+str(sums))
 
-    if counts.count(max(counts.values())) == 1:
+    print(max(counts.values()))
+    print(collections.Counter(counts.values()))
+    print(collections.Counter(counts.values())[max(counts.values())])
+    if collections.Counter(counts.values())[max(counts.values())] == 1:
         CaptionData = dict(caption=max(counts, key=counts.get))
     else:
         CaptionData = dict(caption=max(sums, key=sums.get))
