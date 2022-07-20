@@ -29,5 +29,5 @@ def SituationJudgment(string):
         CaptionData = dict(caption=max(counts, key=counts.get))
     else:
         CaptionData = dict(caption=max(sums, key=sums.get))
-    print("\n"+CaptionData["caption"])
+    print("\n"+CaptionData["caption"]+"\n")
     return CaptionData
