@@ -1,6 +1,4 @@
 import os
-from queue import PriorityQueue
-from tkinter import image_names
 from torch import nn
 import numpy as np
 import torch
@@ -11,7 +9,7 @@ import clip
 import glob
 import skimage.io as io
 import PIL.Image
-from tqdm import tqdm, trange
+from tqdm import trange
 
 N = type(None)
 V = np.array
