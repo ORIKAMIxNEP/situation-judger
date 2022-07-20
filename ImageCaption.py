@@ -29,14 +29,14 @@ D = torch.device
 CPU = torch.device("cpu")
 
 
-def get_device(device_id: int) -> D:
+def getDevice(device_id: int) -> D:
     if not torch.cuda.is_available():
         return CPU
     device_id = min(torch.cuda.device_count() - 1, device_id)
     return torch.device(f"cuda:{device_id}")
 
 
-CUDA = get_device
+CUDA = getDevice
 
 
 class MLP(nn.Module):
