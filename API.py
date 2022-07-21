@@ -1,7 +1,9 @@
+from tkinter.messagebox import NO
+from xml.etree.ElementTree import canonicalize
 from flask import Flask, render_template, request, jsonify
 import datetime
 import requests
-from ImageCaption import ImageCaption
+from ImageCaption import N, ClipCaptionModel, ImageCaption
 from OrganizeFiles import OrganizeFiles
 from SituationJudgment import SituationJudgment
 
@@ -22,7 +24,7 @@ def API():
 @app.route("/web_test", methods=["GET", "POST"])
 def WebTest():
     if request.method == "GET":
-        situation = None
+        SituationData = {"caption": None, "nouns": None, "situation": None}
     elif request.method == "POST":
         fs = request.files["image"]
         imagePath = "../images/" + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg"
