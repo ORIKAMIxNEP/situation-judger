@@ -10,4 +10,4 @@ def OrganizeFiles():
         files.sort(key=itemgetter(1), reverse=True)
         for i, file in enumerate(files):
             if i > 9:
-                os.remove(file[i])
+                os.remove("../images/"+file[i])
