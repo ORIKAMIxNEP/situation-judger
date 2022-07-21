@@ -1,15 +1,15 @@
-import os
-from torch import nn
-import numpy as np
-import torch
-import torch.nn.functional as nnf
-from typing import Tuple, List, Union, Optional
-from transformers import GPT2Tokenizer, GPT2LMHeadModel
 import clip
 import glob
-import skimage.io as io
+import numpy as np
+import os
 import PIL.Image
+import skimage.io as io
+from torch import nn
+import torch
+import torch.nn.functional as nnf
 from tqdm import trange
+from transformers import GPT2Tokenizer, GPT2LMHeadModel
+from typing import Tuple, List, Union, Optional
 
 N = type(None)
 V = np.array

@@ -1,6 +1,6 @@
+import collections
 from ExtractNouns import ExtractNouns
 from MeasureSimilarity import MeasureSimilarity
-import collections
 
 
 def SituationJudgment(string):
