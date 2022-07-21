@@ -65,8 +65,8 @@ class ClipCaptionModel(nn.Module):
         if labels is not None:
             dummyToken = self.getDummyToken(tokens.shape[0], tokens.device)
             labels = torch.cat((dummyToken, tokens), dim=1)
-        out = self.gpt(inputsEmbeds=embeddingCat,
-                       labels=labels, attentionMask=mask)
+        out = self.gpt(inputs_embeds=embeddingCat,
+                       labels=labels, attention_mask=mask)
         return out
 
     def __init__(self, prefixLength: int, prefixSize: int = 512):
@@ -120,7 +120,7 @@ def generate2(
                     tokens = tokens.unsqueeze(0).to(device)
                 generated = model.gpt.transformer.wte(tokens)
             for i in range(entryLength):
-                outputs = model.gpt(inputsEmbeds=generated)
+                outputs = model.gpt(inputs_embeds=generated)
                 logits = outputs.logits
                 logits = logits[:, -1, :] / \
                     (temperature if temperature > 0 else 1.0)
