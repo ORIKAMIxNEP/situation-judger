@@ -14,7 +14,7 @@ def API():
         fs = request.files["image"]
         imagePath = "../images/" + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg"
         fs.save(imagePath)
-    return jsonify(SituationJudgment(ImageCaption(imagePath)))
+    return jsonify(SituationJudgment(ImageCaption()))
 
 
 @app.route("/web_test", methods=["GET", "POST"])
