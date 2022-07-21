@@ -29,11 +29,11 @@ D = torch.device
 CPU = torch.device("cpu")
 
 
-def getDevice(device_id: int) -> D:
+def getDevice(deviceID: int) -> D:
     if not torch.cuda.is_available():
         return CPU
-    device_id = min(torch.cuda.device_count() - 1, device_id)
-    return torch.device(f"cuda:{device_id}")
+    deviceID = min(torch.cuda.device_count() - 1, deviceID)
+    return torch.device(f"cuda:{deviceID}")
 
 
 CUDA = getDevice
@@ -54,32 +54,32 @@ class MLP(nn.Module):
 
 
 class ClipCaptionModel(nn.Module):
-    def get_dummy_token(self, batch_size: int, device: D) -> T:
-        return torch.zeros(batch_size, self.prefix_length, dtype=torch.int64, device=device)
+    def getDummyToken(self, batchSize: int, device: D) -> T:
+        return torch.zeros(batchSize, self.prefixLength, dtype=torch.int64, device=device)
 
     def forward(self, tokens: T, prefix: T, mask: Optional[T] = None, labels: Optional[T] = None):
-        embedding_text = self.gpt.transformer.wte(tokens)
-        prefix_projections = self.clip_project(
-            prefix).view(-1, self.prefix_length, self.gpt_embedding_size)
-        embedding_cat = torch.cat((prefix_projections, embedding_text), dim=1)
+        embeddingText = self.gpt.transformer.wte(tokens)
+        prefixProjections = self.clip_project(
+            prefix).view(-1, self.prefixLength, self.gpt_embedding_size)
+        embeddingCat = torch.cat((prefixProjections, embeddingText), dim=1)
         if labels is not None:
-            dummy_token = self.get_dummy_token(tokens.shape[0], tokens.device)
-            labels = torch.cat((dummy_token, tokens), dim=1)
-        out = self.gpt(inputs_embeds=embedding_cat,
-                       labels=labels, attention_mask=mask)
+            dummyToken = self.getDummyToken(tokens.shape[0], tokens.device)
+            labels = torch.cat((dummyToken, tokens), dim=1)
+        out = self.gpt(inputsEmbeds=embeddingCat,
+                       labels=labels, attentionMask=mask)
         return out
 
-    def __init__(self, prefix_length: int, prefix_size: int = 512):
+    def __init__(self, prefixLength: int, prefixSize: int = 512):
         super(ClipCaptionModel, self).__init__()
-        self.prefix_length = prefix_length
+        self.prefixLength = prefixLength
         self.gpt = GPT2LMHeadModel.from_pretrained("gpt2")
         self.gpt_embedding_size = self.gpt.transformer.wte.weight.shape[1]
-        if prefix_length > 10:
+        if prefixLength > 10:
             self.clip_project = nn.Linear(
-                prefix_size, self.gpt_embedding_size * prefix_length)
+                prefixSize, self.gpt_embedding_size * prefixLength)
         else:
-            self.clip_project = MLP((prefix_size, (self.gpt_embedding_size *
-                                    prefix_length) // 2, self.gpt_embedding_size * prefix_length))
+            self.clip_project = MLP(
+                (prefixSize, (self.gpt_embedding_size * prefixLength) // 2, self.gpt_embedding_size * prefixLength))
 
 
 class ClipCaptionPrefix(ClipCaptionModel):
@@ -98,21 +98,20 @@ def generate2(
         tokens=None,
         prompt=None,
         embed=None,
-        entry_count=1,
-        entry_length=67,
-        top_p=0.8,
+        entryCount=1,
+        entryLength=67,
+        topP=0.8,
         temperature=1.,
-        stop_token: str = ".",
+        stopToken: str = ".",
 ):
     model.eval()
-    generated_num = 0
-    generated_list = []
-    stop_token_index = tokenizer.encode(stop_token)[0]
-    filter_value = -float("Inf")
+    generatedList = []
+    stopTokenIndex = tokenizer.encode(stopToken)[0]
+    filterValue = -float("Inf")
     device = next(model.parameters()).device
 
     with torch.no_grad():
-        for entry_idx in trange(entry_count):
+        for entryIndex in trange(entryCount):
             if embed is not None:
                 generated = embed
             else:
@@ -120,58 +119,55 @@ def generate2(
                     tokens = torch.tensor(tokenizer.encode(prompt))
                     tokens = tokens.unsqueeze(0).to(device)
                 generated = model.gpt.transformer.wte(tokens)
-            for i in range(entry_length):
-                outputs = model.gpt(inputs_embeds=generated)
+            for i in range(entryLength):
+                outputs = model.gpt(inputsEmbeds=generated)
                 logits = outputs.logits
                 logits = logits[:, -1, :] / \
                     (temperature if temperature > 0 else 1.0)
-                sorted_logits, sorted_indices = torch.sort(
+                sortedLogits, sortedIndices = torch.sort(
                     logits, descending=True)
-                cumulative_probs = torch.cumsum(
-                    nnf.softmax(sorted_logits, dim=-1), dim=-1)
-                sorted_indices_to_remove = cumulative_probs > top_p
-                sorted_indices_to_remove[..., 1:] = sorted_indices_to_remove[
-                    ..., :-1
-                ].clone()
-                sorted_indices_to_remove[..., 0] = 0
-                indices_to_remove = sorted_indices[sorted_indices_to_remove]
-                logits[:, indices_to_remove] = filter_value
-                next_token = torch.argmax(logits, -1).unsqueeze(0)
-                next_token_embed = model.gpt.transformer.wte(next_token)
+                cumulativeProbs = torch.cumsum(
+                    nnf.softmax(sortedLogits, dim=-1), dim=-1)
+                sortedIndicesToRemove = cumulativeProbs > topP
+                sortedIndicesToRemove[...,
+                                      1:] = sortedIndicesToRemove[..., :-1].clone()
+                sortedIndicesToRemove[..., 0] = 0
+                indicesToRemove = sortedIndices[sortedIndicesToRemove]
+                logits[:, indicesToRemove] = filterValue
+                nextToken = torch.argmax(logits, -1).unsqueeze(0)
+                nextTokenEmbed = model.gpt.transformer.wte(nextToken)
                 if tokens is None:
-                    tokens = next_token
+                    tokens = nextToken
                 else:
-                    tokens = torch.cat((tokens, next_token), dim=1)
-                generated = torch.cat((generated, next_token_embed), dim=1)
-                if stop_token_index == next_token.item():
+                    tokens = torch.cat((tokens, nextToken), dim=1)
+                generated = torch.cat((generated, nextTokenEmbed), dim=1)
+                if stopTokenIndex == nextToken.item():
                     break
-            output_list = list(tokens.squeeze().cpu().numpy())
-            output_text = tokenizer.decode(output_list)
-            generated_list.append(output_text)
-    return generated_list[0]
+            outputList = list(tokens.squeeze().cpu().numpy())
+            outputText = tokenizer.decode(outputList)
+            generatedList.append(outputText)
+    return generatedList[0]
 
 
 def ImageCaption():
-    model_path = os.path.join("../models", "conceptual_weights.pt")
+    modelPath = os.path.join("../models", "conceptual_weights.pt")
     device = CUDA(0) if torch.cuda.is_available() else "cpu"
-    clip_model, preprocess = clip.load("ViT-B/32", device=device, jit=False)
+    clipModel, preprocess = clip.load("ViT-B/32", device=device, jit=False)
     tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-    prefix_length = 10
-    model = ClipCaptionModel(prefix_length)
-    model.load_state_dict(torch.load(model_path, map_location=CPU))
+    prefixLength = 10
+    model = ClipCaptionModel(prefixLength)
+    model.load_state_dict(torch.load(modelPath, mapLocation=CPU))
     model = model.eval()
     device = CUDA(0) if torch.cuda.is_available() else "cpu"
     model = model.to(device)
-    files = glob.glob("../images/*")
-    file = max(files, key=os.path.getctime)
-    image = io.imread(file)
-    pil_image = PIL.Image.fromarray(image)
-    image = preprocess(pil_image).unsqueeze(0).to(device)
+    images = glob.glob("../images/*")
+    imagePath = max(images, key=os.path.getctime)
+    image = io.imread(imagePath)
+    pilImage = PIL.Image.fromarray(image)
+    image = preprocess(pilImage).unsqueeze(0).to(device)
     with torch.no_grad():
-        prefix = clip_model.encode_image(
-            image).to(device, dtype=torch.float32)
-        prefix_embed = model.clip_project(
-            prefix).reshape(1, prefix_length, -1)
-    generated_text_prefix = generate2(model, tokenizer, embed=prefix_embed)
-    print("\n画像キャプション生成："+generated_text_prefix)
-    return generated_text_prefix
+        prefix = clipModel.encode_image(image).to(device, dtype=torch.float32)
+        prefixEmbed = model.clip_project(prefix).reshape(1, prefixLength, -1)
+    generatedTextPrefix = generate2(model, tokenizer, embed=prefixEmbed)
+    print("\n画像キャプション生成："+generatedTextPrefix)
+    return generatedTextPrefix
