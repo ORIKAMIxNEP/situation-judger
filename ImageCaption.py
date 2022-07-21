@@ -156,7 +156,7 @@ def ImageCaption():
     tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
     prefixLength = 10
     model = ClipCaptionModel(prefixLength)
-    model.load_state_dict(torch.load(modelPath, mapLocation=CPU))
+    model.load_state_dict(torch.load(modelPath, map_location=CPU))
     model = model.eval()
     device = CUDA(0) if torch.cuda.is_available() else "cpu"
     model = model.to(device)
