@@ -9,8 +9,7 @@ app.config["MAX_CONTENT_LENGTH"] = 1024 * 1024
 
 
 @app.route("/", methods=["GET", "POST"])
-def API():
-    imagePath = None
+def API(imagePath):
     if request.method == "POST":
         fs = request.files["image"]
         imagePath = "../images/" + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg"
@@ -21,14 +20,12 @@ def API():
 @app.route("/web_test", methods=["GET", "POST"])
 def WebTest():
     if request.method == "GET":
-        imagePath = None
         caption = None
     elif request.method == "POST":
         fs = request.files["image"]
         imagePath = "../images/" + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg"
         fs.save(imagePath)
-        caption = requests.get(
-            "http://172.31.50.221:20221/").json()["caption"]
+        caption = API(imagePath).json()["caption"]
     return render_template("test.html", caption=caption)
 
 
