@@ -10,7 +10,7 @@ def SituationJudgment(caption):
     SituationData.update(dict(nouns=str(nouns)))
 
     similarityList = [{"食事中": {"food": 0, "dish": 0, "meal": 0, "snack": 0}}, {"観光中(建物)": {"building": 0, "structure": 0}}, {
-        "観光中(風景)": {"landscape": 0, "scene": 0}}, {"動物と触れ合い中": {"animal": 0}}, {"自撮り中、又は他人を撮影中": {"human": 0, "person": 0, "people": 0}}]
+        "観光中(風景)": {"landscape": 0, "scene": 0, "spot": 0}}, {"動物と触れ合い中": {"animal": 0}}, {"自撮り中、又は他人を撮影中": {"human": 0, "person": 0, "people": 0}}]
 
     vectors = MeasureSimilarity(nouns, similarityList)
 
