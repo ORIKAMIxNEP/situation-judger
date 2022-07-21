@@ -29,11 +29,11 @@ D = torch.device
 CPU = torch.device("cpu")
 
 
-def getDevice(device_id: int) -> D:
+def getDevice(deviceID: int) -> D:
     if not torch.cuda.is_available():
         return CPU
-    device_id = min(torch.cuda.device_count() - 1, device_id)
-    return torch.device(f"cuda:{device_id}")
+    deviceID = min(torch.cuda.device_count() - 1, deviceID)
+    return torch.device(f"cuda:{deviceID}")
 
 
 CUDA = getDevice
@@ -54,32 +54,32 @@ class MLP(nn.Module):
 
 
 class ClipCaptionModel(nn.Module):
-    def get_dummy_token(self, batch_size: int, device: D) -> T:
-        return torch.zeros(batch_size, self.prefix_length, dtype=torch.int64, device=device)
+    def getDummyToken(self, batch_size: int, device: D) -> T:
+        return torch.zeros(batch_size, self.prefixLength, dtype=torch.int64, device=device)
 
     def forward(self, tokens: T, prefix: T, mask: Optional[T] = None, labels: Optional[T] = None):
         embedding_text = self.gpt.transformer.wte(tokens)
-        prefix_projections = self.clip_project(
-            prefix).view(-1, self.prefix_length, self.gpt_embedding_size)
-        embedding_cat = torch.cat((prefix_projections, embedding_text), dim=1)
+        prefixProjections = self.clip_project(
+            prefix).view(-1, self.prefixLength, self.gpt_embedding_size)
+        embedding_cat = torch.cat((prefixProjections, embedding_text), dim=1)
         if labels is not None:
-            dummy_token = self.get_dummy_token(tokens.shape[0], tokens.device)
+            dummy_token = self.getDummyToken(tokens.shape[0], tokens.device)
             labels = torch.cat((dummy_token, tokens), dim=1)
         out = self.gpt(inputs_embeds=embedding_cat,
                        labels=labels, attention_mask=mask)
         return out
 
-    def __init__(self, prefix_length: int, prefix_size: int = 512):
+    def __init__(self, prefixLength: int, prefix_size: int = 512):
         super(ClipCaptionModel, self).__init__()
-        self.prefix_length = prefix_length
+        self.prefixLength = prefixLength
         self.gpt = GPT2LMHeadModel.from_pretrained("gpt2")
         self.gpt_embedding_size = self.gpt.transformer.wte.weight.shape[1]
-        if prefix_length > 10:
+        if prefixLength > 10:
             self.clip_project = nn.Linear(
-                prefix_size, self.gpt_embedding_size * prefix_length)
+                prefix_size, self.gpt_embedding_size * prefixLength)
         else:
             self.clip_project = MLP((prefix_size, (self.gpt_embedding_size *
-                                    prefix_length) // 2, self.gpt_embedding_size * prefix_length))
+                                    prefixLength) // 2, self.gpt_embedding_size * prefixLength))
 
 
 class ClipCaptionPrefix(ClipCaptionModel):
@@ -151,27 +151,27 @@ def generate2(
     return generated_list[0]
 
 
-def ImageCaption(filePath):
+def ImageCaption():
     model_path = os.path.join("../models", "conceptual_weights.pt")
     device = CUDA(0) if torch.cuda.is_available() else "cpu"
     clip_model, preprocess = clip.load("ViT-B/32", device=device, jit=False)
     tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-    prefix_length = 10
-    model = ClipCaptionModel(prefix_length)
+    prefixLength = 10
+    model = ClipCaptionModel(prefixLength)
     model.load_state_dict(torch.load(model_path, map_location=CPU))
     model = model.eval()
     device = CUDA(0) if torch.cuda.is_available() else "cpu"
     model = model.to(device)
-    #files = glob.glob("../images/*")
-    #file = max(files, key=os.path.getctime)
-    image = io.imread(filePath)
+    images = glob.glob("../images/*")
+    imagePath = max(images, key=os.path.getctime)
+    image = io.imread(imagePath)
     pil_image = PIL.Image.fromarray(image)
     image = preprocess(pil_image).unsqueeze(0).to(device)
     with torch.no_grad():
         prefix = clip_model.encode_image(
             image).to(device, dtype=torch.float32)
         prefix_embed = model.clip_project(
-            prefix).reshape(1, prefix_length, -1)
+            prefix).reshape(1, prefixLength, -1)
     generated_text_prefix = generate2(model, tokenizer, embed=prefix_embed)
     print("\n画像キャプション生成："+generated_text_prefix)
     return generated_text_prefix
