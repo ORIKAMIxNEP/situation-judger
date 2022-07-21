@@ -10,11 +10,12 @@ app.config["MAX_CONTENT_LENGTH"] = 1024 * 1024
 
 @app.route("/", methods=["GET", "POST"])
 def API():
+    imagePath = None
     if request.method == "POST":
         fs = request.files["image"]
         imagePath = "../images/" + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg"
         fs.save(imagePath)
-    return jsonify(SituationJudgment(ImageCaption()))
+    return jsonify(SituationJudgment(ImageCaption(imagePath)))
 
 
 @app.route("/web_test", methods=["GET", "POST"])

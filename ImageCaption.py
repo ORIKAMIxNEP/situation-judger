@@ -151,7 +151,7 @@ def generate2(
     return generated_list[0]
 
 
-def ImageCaption():
+def ImageCaption(filePath):
     model_path = os.path.join("../models", "conceptual_weights.pt")
     device = CUDA(0) if torch.cuda.is_available() else "cpu"
     clip_model, preprocess = clip.load("ViT-B/32", device=device, jit=False)
@@ -162,9 +162,9 @@ def ImageCaption():
     model = model.eval()
     device = CUDA(0) if torch.cuda.is_available() else "cpu"
     model = model.to(device)
-    files = glob.glob("../images/*")
-    file = max(files, key=os.path.getctime)
-    image = io.imread(file)
+    #files = glob.glob("../images/*")
+    #file = max(files, key=os.path.getctime)
+    image = io.imread(filePath)
     pil_image = PIL.Image.fromarray(image)
     image = preprocess(pil_image).unsqueeze(0).to(device)
     with torch.no_grad():
