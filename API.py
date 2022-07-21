@@ -25,7 +25,8 @@ def WebTest():
         fs = request.files["image"]
         imagePath = "../images/" + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg"
         fs.save(imagePath)
-        caption = API().json()["caption"]
+        caption = requests.get(
+            "http://172.31.50.221:20221/").json()["caption"]
     return render_template("test.html", caption=caption)
 
 
