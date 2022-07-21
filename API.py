@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import datetime
 import requests
 from ImageCaption import ImageCaption
+from OrganizeFiles import OrganizeFiles
 from SituationJudgment import SituationJudgment
 
 app = Flask(__name__)
@@ -14,6 +15,7 @@ def API():
         fs = request.files["image"]
         imagePath = "../images/" + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg"
         fs.save(imagePath)
+        OrganizeFiles()
     return jsonify(SituationJudgment(ImageCaption()))
 
 
