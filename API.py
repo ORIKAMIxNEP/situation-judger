@@ -22,14 +22,14 @@ def API():
 @app.route("/web_test", methods=["GET", "POST"])
 def WebTest():
     if request.method == "GET":
-        caption = None
+        situation = None
     elif request.method == "POST":
         fs = request.files["image"]
         imagePath = "../images/" + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg"
         fs.save(imagePath)
-        caption = requests.get(
-            "http://172.31.50.221:20221/").json()["caption"]
-    return render_template("test.html", caption=caption)
+        SituationData = requests.get(
+            "http://172.31.50.221:20221/").json()
+    return render_template("test.html", caption=SituationData["caption"], nouns=SituationData["nouns"], situation=SituationData["situation"])
 
 
 if __name__ == "__main__":

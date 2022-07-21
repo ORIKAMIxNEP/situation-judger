@@ -169,5 +169,5 @@ def ImageCaption():
         prefix = clipModel.encode_image(image).to(device, dtype=torch.float32)
         prefixEmbed = model.clip_project(prefix).reshape(1, prefixLength, -1)
     generatedTextPrefix = generate2(model, tokenizer, embed=prefixEmbed)
-    print("\n画像キャプション生成："+generatedTextPrefix)
+    print("\n画像のキャプション："+generatedTextPrefix)
     return generatedTextPrefix

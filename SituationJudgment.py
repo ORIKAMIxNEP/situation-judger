@@ -3,8 +3,11 @@ from ExtractNouns import ExtractNouns
 from MeasureSimilarity import MeasureSimilarity
 
 
-def SituationJudgment(string):
-    nouns = ExtractNouns(string)
+def SituationJudgment(caption):
+    SituationData = dict(caption=caption)
+
+    nouns = ExtractNouns(caption)
+    SituationData = dict(nouns=str(nouns))
 
     similarityList = [{"食事中": {"food": 0, "dish": 0, "meal": 0, "snack": 0}}, {"観光中(建物)": {"building": 0, "structure": 0}}, {
         "観光中(風景)": {"landscape": 0, "scene": 0}}, {"動物と触れ合い中": {"animal": 0}}, {"自撮り中、又は他人を撮影中": {"human": 0, "person": 0, "people": 0}}]
@@ -26,8 +29,8 @@ def SituationJudgment(string):
     print("\n"+str(sums))
 
     if collections.Counter(counts.values())[max(counts.values())] == 1:
-        CaptionData = dict(caption=max(counts, key=counts.get))
+        SituationData = dict(situation=max(counts, key=counts.get))
     else:
-        CaptionData = dict(caption=max(sums, key=sums.get))
-    print("\n"+CaptionData["caption"]+"\n")
-    return CaptionData
+        SituationData = dict(situation=max(sums, key=sums.get))
+    print("\n状況説明："+SituationData["situation"]+"\n")
+    return SituationData
