@@ -22,8 +22,3 @@ jobs:
             git add .
             git commit -m "ServerUpdate"
             git push origin main
-            cd /var/www/html/laravelapp/
-            git pull origin main
-            git add .
-            git commit -m "ServerUpdate"
-            git push origin main
