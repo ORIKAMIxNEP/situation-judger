@@ -20,5 +20,5 @@ jobs:
             cd ~/procon33_RemoteTravelers_python/
             git pull origin main
             git add .
-            git commit -m "ServerUpdate"
+            git commit -m "ServerUpdate1"
             git push origin main
