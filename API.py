@@ -1,9 +1,7 @@
-from tkinter.messagebox import NO
-from xml.etree.ElementTree import canonicalize
 from flask import Flask, render_template, request, jsonify
 import datetime
 import requests
-from ImageCaption import N, ClipCaptionModel, ImageCaption
+from ImageCaption import ImageCaption
 from OrganizeFiles import OrganizeFiles
 from SituationJudgment import SituationJudgment
 
