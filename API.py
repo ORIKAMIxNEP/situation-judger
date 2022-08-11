@@ -6,7 +6,7 @@ from OrganizeFiles import OrganizeFiles
 from SituationJudgment import SituationJudgment
 
 app = Flask(__name__)
-app.config["MAX_CONTENT_LENGTH"] = 1024 * 1024
+app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -28,9 +28,9 @@ def WebTest():
         imagePath = "../images/" + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg"
         fs.save(imagePath)
         SituationData = requests.get(
-            "http://172.31.50.221:20221/").json()
+            "http://172.31.50.221:8080/").json()
     return render_template("test.html", caption=SituationData["caption"], nouns=SituationData["nouns"], situation=SituationData["situation"])
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=20221, debug=True)
+    app.run(host="0.0.0.0", port=8080, debug=True)
