@@ -28,9 +28,9 @@ def WebTest():
         imagePath = "../images/" + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg"
         fs.save(imagePath)
         SituationData = requests.get(
-            "http://172.31.50.221:80/").json()
+            "http://172.31.50.221:8080/").json()
     return render_template("test.html", caption=SituationData["caption"], nouns=SituationData["nouns"], situation=SituationData["situation"])
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=80, debug=True)
+    app.run(host="0.0.0.0", port=8080, debug=True)
