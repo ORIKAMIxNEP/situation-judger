@@ -28,7 +28,7 @@ def WebTest():
         imagePath = "../images/" + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg"
         fs.save(imagePath)
         SituationData = requests.get(
-            "http://172.31.50.221:8080/").json()
+            "http://172.31.50.221:8081/").json()
     return render_template("test.html", caption=SituationData["caption"], nouns=SituationData["nouns"], situation=SituationData["situation"])
 
 
