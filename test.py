@@ -1,3 +1,3 @@
 import requests
 
-print(requests.get("127.0.0.1:8082"))
+print(requests.get("http://127.0.0.1:8082"))
