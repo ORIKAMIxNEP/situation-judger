@@ -1,11 +1,12 @@
-from flask import Flask
+from flask import Flask, jsonify
 
 app = Flask(__name__)
 
 
 @app.route("/", methods=["GET"])
 def testapi():
-    return {"data": "test"}
+    data = {"data": "test"}
+    return jsonify(data)
 
 
 if __name__ == "__main__":
