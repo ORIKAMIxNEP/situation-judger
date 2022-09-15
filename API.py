@@ -3,7 +3,7 @@ import datetime
 import requests
 from ImageCaption import ImageCaption
 from OrganizeFiles import OrganizeFiles
-from SituationJudgment import SituationJudgment
+from JudgeSituation import JudgeSituation
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
@@ -16,7 +16,7 @@ def API():
         imagePath = "../images/" + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg"
         fs.save(imagePath)
         OrganizeFiles()
-    return jsonify(SituationJudgment(ImageCaption()))
+    return jsonify(JudgeSituation(ImageCaption()))
 
 
 @app.route("/web_test", methods=["GET", "POST"])

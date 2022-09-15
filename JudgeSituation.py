@@ -3,7 +3,7 @@ from ExtractNouns import ExtractNouns
 from MeasureSimilarity import MeasureSimilarity
 
 
-def SituationJudgment(caption):
+def JudgeSituation(caption):
     SituationData = dict(caption=caption)
 
     nouns = ExtractNouns(caption)
