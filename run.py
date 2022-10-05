@@ -11,6 +11,7 @@ app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
 
 @app.route("/", methods=["GET", "POST"])
 def API():
+    # APIの構築
     if request.method == "POST":
         fs = request.files["image"]
         imagePath = "../images/" + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg"
@@ -21,6 +22,7 @@ def API():
 
 @app.route("/web_test", methods=["GET", "POST"])
 def WebTest():
+    # Webでの動作確認
     if request.method == "GET":
         SituationData = {"caption": None, "nouns": None, "situation": None}
     elif request.method == "POST":

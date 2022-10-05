@@ -3,6 +3,7 @@ import os
 
 
 def OrganizeFiles():
+    # 画像ファイルの枚数を10に制限する関数
     if len(os.listdir("../images/")) > 10:
         files = []
         for file in os.listdir("../images/"):

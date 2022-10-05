@@ -5,6 +5,7 @@ nltk.download("averaged_perceptron_tagger")
 
 
 def ExtractNouns(string):
+    # 文章を形態素解析して、名詞を抽出する関数
     words = nltk.word_tokenize(string)
     nouns = []
     for word in nltk.pos_tag(words):

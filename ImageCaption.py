@@ -150,6 +150,7 @@ def generate2(
 
 
 def ImageCaption():
+    # 画像からキャプションを生成する関数
     modelPath = os.path.join("../models", "conceptual_weights.pt")
     device = CUDA(0) if torch.cuda.is_available() else "cpu"
     clipModel, preprocess = clip.load("ViT-B/32", device=device, jit=False)
@@ -160,14 +161,17 @@ def ImageCaption():
     model = model.eval()
     device = CUDA(0) if torch.cuda.is_available() else "cpu"
     model = model.to(device)
+
     images = glob.glob("../images/*")
     imagePath = max(images, key=os.path.getctime)
     image = io.imread(imagePath)
     pilImage = PIL.Image.fromarray(image)
     image = preprocess(pilImage).unsqueeze(0).to(device)
+
     with torch.no_grad():
         prefix = clipModel.encode_image(image).to(device, dtype=torch.float32)
         prefixEmbed = model.clip_project(prefix).reshape(1, prefixLength, -1)
+
     generatedTextPrefix = generate2(model, tokenizer, embed=prefixEmbed)
     print("\n画像のキャプション："+generatedTextPrefix)
     return generatedTextPrefix
