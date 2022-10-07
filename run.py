@@ -1,9 +1,11 @@
-from flask import Flask, render_template, request, jsonify
 import datetime
+
 import requests
+from flask import Flask, jsonify, render_template, request
+
 from ImageCaption import ImageCaption
-from OrganizeFiles import OrganizeFiles
 from JudgeSituation import JudgeSituation
+from OrganizeFiles import OrganizeFiles
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024

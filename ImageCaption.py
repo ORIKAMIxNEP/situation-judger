@@ -1,15 +1,16 @@
-import clip
 import glob
-import numpy as np
 import os
+from typing import List, Optional, Tuple, Union
+
+import clip
+import numpy as np
 import PIL.Image
 import skimage.io as io
-from torch import nn
 import torch
 import torch.nn.functional as nnf
+from torch import nn
 from tqdm import trange
-from transformers import GPT2Tokenizer, GPT2LMHeadModel
-from typing import Tuple, List, Union, Optional
+from transformers import GPT2LMHeadModel, GPT2Tokenizer
 
 N = type(None)
 V = np.array

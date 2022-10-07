@@ -1,5 +1,5 @@
-from operator import itemgetter
 import os
+from operator import itemgetter
 
 
 def OrganizeFiles():
