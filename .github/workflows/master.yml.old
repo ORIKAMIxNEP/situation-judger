@@ -1,13 +1,13 @@
-name: main
+name: master
 on:
   push:
     branches:
-      - main
+      - master
 jobs:
   build:
     runs-on: ubuntu-20.04
     steps:
-      - name: main
+      - name: master
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
@@ -17,8 +17,8 @@ jobs:
           proxy_username: ${{ secrets.USERNAME }}
           proxy_password: ${{ secrets.PROXY_PASSWORD }}
           script: |
-            cd ~/procon33_RemoteTravelers_python/
-            git pull origin main
+            cd ~/SituationJudger/
+            git pull origin master
             git add .
             git commit -m "ServerUpdate"
-            git push origin main
+            git push origin master
