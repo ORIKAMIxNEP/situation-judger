@@ -5,7 +5,6 @@ from MeasureSimilarity import MeasureSimilarity
 
 
 def JudgeSituation(caption):
-    # 名詞の単語ベクトルから状況を推論する関数
     SituationData = dict(caption=caption)
 
     nouns = ExtractNouns(caption)
