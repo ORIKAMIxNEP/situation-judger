@@ -5,7 +5,6 @@ wm_en = gensim.models.KeyedVectors.load_word2vec_format(file)
 
 
 def MeasureSimilarity(nouns, similarityList):
-    # 単語同士の類似度を測定する関数
     vectors = {noun: {"type": "", "max": -1} for noun in nouns}
     for noun in nouns:
         for i in range(len(similarityList)):
