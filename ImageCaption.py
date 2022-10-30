@@ -151,7 +151,6 @@ def generate2(
 
 
 def ImageCaption():
-    # 画像からキャプションを生成する関数
     modelPath = os.path.join("../models", "conceptual_weights.pt")
     device = CUDA(0) if torch.cuda.is_available() else "cpu"
     clipModel, preprocess = clip.load("ViT-B/32", device=device, jit=False)
