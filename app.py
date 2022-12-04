@@ -15,7 +15,7 @@ app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
 def API():
     if request.method == "POST":
         fs = request.files["image"]
-        imagePath = "../images/" + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg"
+        imagePath = "images/" + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg"
         fs.save(imagePath)
         OrganizeFiles()
     return jsonify(JudgeSituation(ImageCaption()))
@@ -27,7 +27,7 @@ def WebTest():
         SituationData = {"caption": None, "nouns": None, "situation": None}
     elif request.method == "POST":
         fs = request.files["image"]
-        imagePath = "../images/" + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg"
+        imagePath = "images/" + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg"
         fs.save(imagePath)
         SituationData = requests.get(
             "http://172.31.50.221:8081/").json()
