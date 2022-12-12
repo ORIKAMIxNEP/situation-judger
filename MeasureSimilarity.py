@@ -1,6 +1,6 @@
 import gensim
 
-file = "~/lexvec.enwiki+newscrawl.300d.W.pos.vectors.gz"
+file = "lexvec.enwiki+newscrawl.300d.W.pos.vectors.gz"
 wm_en = gensim.models.KeyedVectors.load_word2vec_format(file)
 
 
