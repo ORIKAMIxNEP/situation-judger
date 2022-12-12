@@ -1,3 +1,5 @@
 __pycache__/
+lexvec.enwiki+newscrawl.300d.W.pos.vectors.gz
+model/
 nohup.out
 static/images/
