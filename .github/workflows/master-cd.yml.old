@@ -18,4 +18,4 @@ jobs:
           proxy_password: ${{ secrets.PROXY_PASSWORD }}
           script: |
             cd ~/situation-judger/
-            git pull origin master
+            git reset --hard origin/master
