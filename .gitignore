@@ -1,5 +1,10 @@
+# Python
 __pycache__/
+
+# situation-judger
 lexvec.enwiki+newscrawl.300d.W.pos.vectors.gz
 models/
-nohup.out
 static/images/
+
+# Ubuntu
+nohup.out
