@@ -14,5 +14,5 @@ def ExtractNouns(string):
                     break
             else:
                 nouns.append(word[0])
-    print("\n抽出した名詞："+str(nouns)+"\n")
+    print("\n抽出した名詞：" + str(nouns) + "\n")
     return nouns

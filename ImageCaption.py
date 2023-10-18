@@ -56,18 +56,22 @@ class MLP(nn.Module):
 
 class ClipCaptionModel(nn.Module):
     def getDummyToken(self, batchSize: int, device: D) -> T:
-        return torch.zeros(batchSize, self.prefixLength, dtype=torch.int64, device=device)
+        return torch.zeros(
+            batchSize, self.prefixLength, dtype=torch.int64, device=device
+        )
 
-    def forward(self, tokens: T, prefix: T, mask: Optional[T] = None, labels: Optional[T] = None):
+    def forward(
+        self, tokens: T, prefix: T, mask: Optional[T] = None, labels: Optional[T] = None
+    ):
         embeddingText = self.gpt.transformer.wte(tokens)
-        prefixProjections = self.clip_project(
-            prefix).view(-1, self.prefixLength, self.gpt_embedding_size)
+        prefixProjections = self.clip_project(prefix).view(
+            -1, self.prefixLength, self.gpt_embedding_size
+        )
         embeddingCat = torch.cat((prefixProjections, embeddingText), dim=1)
         if labels is not None:
             dummyToken = self.getDummyToken(tokens.shape[0], tokens.device)
             labels = torch.cat((dummyToken, tokens), dim=1)
-        out = self.gpt(inputs_embeds=embeddingCat,
-                       labels=labels, attention_mask=mask)
+        out = self.gpt(inputs_embeds=embeddingCat, labels=labels, attention_mask=mask)
         return out
 
     def __init__(self, prefixLength: int, prefixSize: int = 512):
@@ -77,10 +81,16 @@ class ClipCaptionModel(nn.Module):
         self.gpt_embedding_size = self.gpt.transformer.wte.weight.shape[1]
         if prefixLength > 10:
             self.clip_project = nn.Linear(
-                prefixSize, self.gpt_embedding_size * prefixLength)
+                prefixSize, self.gpt_embedding_size * prefixLength
+            )
         else:
             self.clip_project = MLP(
-                (prefixSize, (self.gpt_embedding_size * prefixLength) // 2, self.gpt_embedding_size * prefixLength))
+                (
+                    prefixSize,
+                    (self.gpt_embedding_size * prefixLength) // 2,
+                    self.gpt_embedding_size * prefixLength,
+                )
+            )
 
 
 class ClipCaptionPrefix(ClipCaptionModel):
@@ -94,16 +104,16 @@ class ClipCaptionPrefix(ClipCaptionModel):
 
 
 def generate2(
-        model,
-        tokenizer,
-        tokens=None,
-        prompt=None,
-        embed=None,
-        entryCount=1,
-        entryLength=67,
-        topP=0.8,
-        temperature=1.,
-        stopToken: str = ".",
+    model,
+    tokenizer,
+    tokens=None,
+    prompt=None,
+    embed=None,
+    entryCount=1,
+    entryLength=67,
+    topP=0.8,
+    temperature=1.0,
+    stopToken: str = ".",
 ):
     model.eval()
     generatedList = []
@@ -123,15 +133,13 @@ def generate2(
             for i in range(entryLength):
                 outputs = model.gpt(inputs_embeds=generated)
                 logits = outputs.logits
-                logits = logits[:, -1, :] / \
-                    (temperature if temperature > 0 else 1.0)
-                sortedLogits, sortedIndices = torch.sort(
-                    logits, descending=True)
+                logits = logits[:, -1, :] / (temperature if temperature > 0 else 1.0)
+                sortedLogits, sortedIndices = torch.sort(logits, descending=True)
                 cumulativeProbs = torch.cumsum(
-                    nnf.softmax(sortedLogits, dim=-1), dim=-1)
+                    nnf.softmax(sortedLogits, dim=-1), dim=-1
+                )
                 sortedIndicesToRemove = cumulativeProbs > topP
-                sortedIndicesToRemove[...,
-                                      1:] = sortedIndicesToRemove[..., :-1].clone()
+                sortedIndicesToRemove[..., 1:] = sortedIndicesToRemove[..., :-1].clone()
                 sortedIndicesToRemove[..., 0] = 0
                 indicesToRemove = sortedIndices[sortedIndicesToRemove]
                 logits[:, indicesToRemove] = filterValue
@@ -173,5 +181,5 @@ def ImageCaption():
         prefixEmbed = model.clip_project(prefix).reshape(1, prefixLength, -1)
 
     generatedTextPrefix = generate2(model, tokenizer, embed=prefixEmbed)
-    print("\n画像のキャプション："+generatedTextPrefix)
+    print("\n画像のキャプション：" + generatedTextPrefix)
     return generatedTextPrefix
